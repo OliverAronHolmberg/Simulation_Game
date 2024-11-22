@@ -13,7 +13,10 @@ class Game:
         self.screen_width = info.current_w
         self.screen_height = info.current_h
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        
 
+        self.clock = pygame.time.Clock()
+        self.fps = 60
 
         self.entities = []
 
@@ -29,6 +32,7 @@ class Game:
 
     def Main_loop(self):
         while True:
+            self.clock.tick(self.fps)
             events = pygame.event.get()
             self.screen.fill((0,0,0))
 
