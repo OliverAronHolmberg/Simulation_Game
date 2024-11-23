@@ -2,8 +2,6 @@ import pygame
 import os
 import sys
 import random
-
-
 from Entity import Entity
 
 class Game:
@@ -13,36 +11,118 @@ class Game:
         self.screen_width = info.current_w
         self.screen_height = info.current_h
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        
+        self.keydown = False
 
         self.clock = pygame.time.Clock()
         self.fps = 60
 
-        self.entities = []
 
-        for entity in range(10):
-            entity = Entity(self.screen, self, "Cow", "Friendly", random.randint(0, self.screen_width),random.randint(0, self.screen_height))
+        #Entities
+        self.entities = []
+        
+        for entity in range(random.randint(5,15)):
+            entity = Entity(self.screen, self, "Cow", "Friendly", random.randint(0, self.screen_width),random.randint(0, self.screen_height), random.choice([True, False]))
             self.entities.append(entity)
 
 
-    def exit(self):
+
+        #Player
+        self.world_width, self.world_height = self.screen_width*2, self.screen_height*2
+        self.clicked = True
+        self.zoom_level = 1
+        self.camera_x = 0
+        self.camera_y = 0
+        
+    def exit_game(self):
         pygame.quit()
-        sys.exit()
+        sys.exit() 
+
+
+    #Player
+
+    def Main_Player(self):
+        keys = pygame.key.get_pressed()
+        events = pygame.event.get()
+        
+
+        for event in events:
+                if event.type == pygame.QUIT:
+                    self.exit_game()
+
+
+                
+                        
+                
+                    
+                if event.type == pygame.MOUSEWHEEL:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    
+                    world_mouse_x = self.camera_x + mouse_x / self.zoom_level
+                    world_mouse_y = self.camera_y + mouse_y / self.zoom_level
+
+                    prev_zoom = self.zoom_level
+                    self.zoom_level += event.y*0.1
+                    self.zoom_level = max(0.5, min(self.zoom_level, 5))
+                    zoom_factor = self.zoom_level/prev_zoom
+
+                    self.camera_x = world_mouse_x - (mouse_x/self.zoom_level)
+                    self.camera_y = world_mouse_y - (mouse_y/self.zoom_level)
+
+                self.camera_x = max(0, min(self.world_width-self.screen_width/self.zoom_level, self.camera_x))
+                self.camera_y = max(0, min(self.world_height-self.screen_height/self.zoom_level, self.camera_y))
+
+
+                if event.type == pygame.KEYDOWN and self.keydown == False:
+                    self.keydown = True
+                    if event.key == pygame.K_0:
+                        for entity in self.entities:
+                            entity.flee = True
+                if event.type == pygame.KEYUP and self.keydown == True:
+                    self.keydown = False
+                    if event.key == pygame.K_0:
+                        for entity in self.entities:
+                            entity.flee = False
+                            
+                
+                mouse_pos = pygame.mouse.get_pos()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.clicked = True
+                    for entity in self.entities:
+                        screen_rect = pygame.Rect(
+                            (entity.x-self.camera_x) * self.zoom_level,          
+                            (entity.y-self.camera_y) * self.zoom_level,
+                            entity.original_width * self.zoom_level,
+                            entity.original_height * self.zoom_level
+                        )
+                        
+                        if screen_rect.collidepoint(mouse_pos):
+                            print("Hello")
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        self.clicked = False #Working on this
+                
+
+
+        if keys[pygame.K_ESCAPE] == True:
+            self.exit_game()
+        
+            
+                
+                
+
+
+        
 
 
     def Main_loop(self):
         while True:
             self.clock.tick(self.fps)
-            events = pygame.event.get()
-            self.screen.fill((0,0,0))
+            self.screen.fill((150,220,150))
 
-            for event in events:
-                if event.type == pygame.QUIT:
-                    self.exit()
+
             for entity in self.entities:
-                self.screen.blit(entity.entity_image, (entity.x, entity.y))
                 entity.Main_Entity()
 
+            self.Main_Player()
 
             pygame.display.flip()
                 
