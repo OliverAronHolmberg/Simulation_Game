@@ -21,7 +21,7 @@ class Game:
         self.entities = []
         
         for entity in range(random.randint(5,15)):
-            entity = Entity(self.screen, self, "Cow", "Friendly", random.randint(0, self.screen_width),random.randint(0, self.screen_height), random.choice([True, False]))
+            entity = Entity(self.screen, self, "Cow", "Friendly", random.randint(0, self.screen_width),random.randint(0, self.screen_height), random.choice([True, False]), pygame.image.load("Images\Entities\Cow.png"))
             self.entities.append(entity)
 
 

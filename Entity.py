@@ -2,14 +2,14 @@ import pygame
 import random
 
 class Entity:
-    def __init__(self, screen, game, type, state, x, y, moving):
+    def __init__(self, screen, game, type, state, x, y, moving, entity_image):
         self.screen = screen
         self.game = game
         self.type = type
         self.state = state
         self.x = x
         self.y = y
-        
+        self.entity_image = entity_image
 
         self.stats = {
             "Alive" : True,
@@ -23,10 +23,7 @@ class Entity:
         
 
 
-        if self.state == "Friendly":
-            self.entity_image = pygame.image.load("Images\Entities\Cow.png")
-        else:
-            pass
+        
         self.rect = self.entity_image.get_rect()
 
 
