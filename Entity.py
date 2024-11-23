@@ -18,7 +18,7 @@ class Entity:
             "Runspeed" : random.randint(20, 25)/10,
             "Walkspeed" : random.randint(5, 10)/10,
         }
-        print(self.stats)
+        
 
         
 

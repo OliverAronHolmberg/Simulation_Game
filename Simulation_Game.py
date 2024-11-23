@@ -71,34 +71,20 @@ class Game:
                 self.camera_x = max(0, min(self.world_width-self.screen_width/self.zoom_level, self.camera_x))
                 self.camera_y = max(0, min(self.world_height-self.screen_height/self.zoom_level, self.camera_y))
 
-
-                if event.type == pygame.KEYDOWN and self.keydown == False:
-                    self.keydown = True
-                    if event.key == pygame.K_0:
-                        for entity in self.entities:
-                            entity.flee = True
-                if event.type == pygame.KEYUP and self.keydown == True:
-                    self.keydown = False
-                    if event.key == pygame.K_0:
-                        for entity in self.entities:
-                            entity.flee = False
-                            
-                
                 mouse_pos = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.clicked = True
+                    self.clicked = not self.clicked
                     for entity in self.entities:
                         screen_rect = pygame.Rect(
                             (entity.x-self.camera_x) * self.zoom_level,          
                             (entity.y-self.camera_y) * self.zoom_level,
-                            entity.original_width * self.zoom_level,
-                            entity.original_height * self.zoom_level
+                            entity.new_width,
+                            entity.new_height
                         )
                         
                         if screen_rect.collidepoint(mouse_pos):
-                            print("Hello")
-                    if event.type == pygame.MOUSEBUTTONUP:
-                        self.clicked = False #Working on this
+                            print(entity.stats)
+
                 
 
 
