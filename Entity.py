@@ -33,8 +33,8 @@ class Entity:
         self.new_height = self.original_height
 
 
-        self.boundry_x = self.game.screen_width
-        self.boundry_y = self.game.screen_height
+        self.boundry_x = self.game.screen_width*2
+        self.boundry_y = self.game.screen_height*2
 
         self.timer = 0
 

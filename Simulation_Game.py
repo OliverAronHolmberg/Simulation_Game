@@ -3,6 +3,7 @@ import os
 import sys
 import random
 from Entity import Entity
+from UI import UI
 
 class Game:
     def __init__(self):
@@ -21,13 +22,17 @@ class Game:
         self.entities = []
         
         for entity in range(random.randint(5,15)):
-            cow = Entity(self.screen, self, "Cow", "Friendly", random.randint(0, self.screen_width),random.randint(0, self.screen_height), random.choice([True, False]), pygame.image.load("Images\Entities\Cow.png"))
+            cow = Entity(self.screen, self, "Cow", "Friendly", random.randint(0, self.screen_width),random.randint(0, self.screen_height), random.choice([True, False]), pygame.image.load("Images\Entities\Cow.png").convert_alpha())
             self.entities.append(cow)
         for entity in range(random.randint(1,5)):
-            Wolf = Entity(self.screen, self, "Enemy", "Unfriendly", random.randint(0, self.screen_width),random.randint(0, self.screen_height), random.choice([True, False]), pygame.image.load("Images\Entities\Wolf.png"))
+            Wolf = Entity(self.screen, self, "Enemy", "Unfriendly", random.randint(0, self.screen_width),random.randint(0, self.screen_height), random.choice([True, False]), pygame.image.load("Images\Entities\Wolf.png").convert_alpha())
             self.entities.append(Wolf)
 
-
+        #UI
+        self.UI = []
+        self.statsmenu = UI(self,self.screen,self.screen_width-500,100, pygame.image.load("Images\\UI\\Stats.png").convert_alpha())
+        self.UI.append(self.statsmenu)
+        
 
         #Player
         self.world_width, self.world_height = self.screen_width*2, self.screen_height*2
@@ -58,6 +63,7 @@ class Game:
                 
                     
                 if event.type == pygame.MOUSEWHEEL:
+                    
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     
                     world_mouse_x = self.camera_x + mouse_x / self.zoom_level
@@ -74,19 +80,37 @@ class Game:
                 self.camera_x = max(0, min(self.world_width-self.screen_width/self.zoom_level, self.camera_x))
                 self.camera_y = max(0, min(self.world_height-self.screen_height/self.zoom_level, self.camera_y))
 
+                
+
+                
+                button = pygame.mouse.get_pressed()
                 mouse_pos = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.clicked = not self.clicked
-                    for entity in self.entities:
-                        screen_rect = pygame.Rect(
-                            (entity.x-self.camera_x) * self.zoom_level,          
-                            (entity.y-self.camera_y) * self.zoom_level,
-                            entity.new_width,
-                            entity.new_height
-                        )
+                    if button[0]:
                         
-                        if screen_rect.collidepoint(mouse_pos):
-                            print(entity.stats)
+                        for entity in self.entities:
+                            screen_rect = pygame.Rect(
+                                (entity.x-self.camera_x) * self.zoom_level,          
+                                (entity.y-self.camera_y) * self.zoom_level,
+                                entity.new_width,
+                                entity.new_height
+                            )
+                            
+                            if screen_rect.collidepoint(mouse_pos):
+                                if self.clicked == True:
+                                    self.clicked = False
+                                else:
+                                    self.clicked = True
+                                break
+                            else:
+                                self.clicked = False
+                            
+                        if self.clicked == True:
+                            self.UI[0].open = True
+                        else:
+                            self.UI[0].open = False
+                    
+                
 
                 
 
@@ -112,6 +136,12 @@ class Game:
                 entity.Main_Entity()
 
             self.Main_Player()
+
+            
+            for ui in self.UI:
+                if ui.open == True:
+                    self.screen.blit(ui.image, (ui.x, ui.y))
+            
 
             pygame.display.flip()
                 
