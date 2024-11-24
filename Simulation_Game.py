@@ -40,6 +40,15 @@ class Game:
         self.zoom_level = 1
         self.camera_x = 0
         self.camera_y = 0
+
+
+        self.clickable = []
+        for ui in self.UI:
+            self.clickable.append(ui)
+        for entity in self.entities:
+            self.clickable.append(entity)
+
+
         
     def exit_game(self):
         pygame.quit()
@@ -83,27 +92,43 @@ class Game:
                 
 
                 
-                button = pygame.mouse.get_pressed()
+                
                 mouse_pos = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if button[0]:
+                    if event.button == 1:
+                        self.clicked = False
+                        
+
                         
                         for entity in self.entities:
-                            screen_rect = pygame.Rect(
-                                (entity.x-self.camera_x) * self.zoom_level,          
-                                (entity.y-self.camera_y) * self.zoom_level,
-                                entity.new_width,
-                                entity.new_height
-                            )
+                                        screen_rect = pygame.Rect(
+                                            (entity.x-self.camera_x) * self.zoom_level,          
+                                            (entity.y-self.camera_y) * self.zoom_level,
+                                            entity.new_width,
+                                            entity.new_height
+                                        )
+                                    
+                                        if screen_rect.collidepoint(mouse_pos):
+                                            
+                                            self.clicked = True
+                                            break
+                                    
+                        for clickable in self.clickable:
+                                if isinstance(clickable, UI):
+                                    screen_rect = pygame.Rect(
+                                        clickable.x, clickable.y,
+                                        clickable.scaled_image.get_width(),
+                                        clickable.scaled_image.get_height()
+                                    )
+
+                                    
+                                    if screen_rect.collidepoint(mouse_pos):
+                                        if self.UI[0].open == True:
+                                            self.clicked = True
+                                            break
                             
-                            if screen_rect.collidepoint(mouse_pos):
-                                if self.clicked == True:
-                                    self.clicked = False
-                                else:
-                                    self.clicked = True
-                                break
-                            else:
-                                self.clicked = False
+                                
+                                    
                             
                         if self.clicked == True:
                             self.UI[0].open = True
@@ -140,7 +165,8 @@ class Game:
             
             for ui in self.UI:
                 if ui.open == True:
-                    self.screen.blit(ui.image, (ui.x, ui.y))
+                    self.screen.blit(ui.scaled_image, (ui.x, ui.y))
+                    pygame.draw.rect(ui.scaled_image, (255,0,0), ui.rect, 2)
             
 
             pygame.display.flip()

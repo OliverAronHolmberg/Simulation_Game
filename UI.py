@@ -7,6 +7,7 @@ class UI:
         self.x = x
         self.y = y
         self.open = False
+        
 
         self.image = image
         
@@ -17,9 +18,8 @@ class UI:
         self.scaled_image = pygame.transform.scale(self.image, (int(self.original_width*3), int(self.original_height*4)))
         self.rect = self.scaled_image.get_rect()
 
-    def Main_UI(self):
-        if self.open == True:
-            self.screen.blit(self.image, (self.x, self.y))
+  
+        
             
             
     

@@ -10,6 +10,7 @@ class Entity:
         self.x = x
         self.y = y
         self.entity_image = entity_image
+        
 
         self.stats = {
             "Alive" : True,
@@ -17,6 +18,7 @@ class Entity:
             "Hungry" : random.choice([True, False]),
             "Runspeed" : random.randint(20, 25)/10,
             "Walkspeed" : random.randint(5, 10)/10,
+            "Type" : self.type
         }
         
 
